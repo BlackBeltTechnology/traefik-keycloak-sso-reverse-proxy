@@ -1,0 +1,212 @@
+version: "3.7"
+
+networks:
+  judo: {}
+
+
+services:
+
+# #############################################################################
+#   Trafik (Load Balancer)
+#  Listen onm 80 and 443. 
+#  It redirect xxxx.${DOMAIN} to the host of the given sybdomain.
+#  It allows to use http / https schema, but http is redirected to https.
+# #############################################################################
+
+  traefik:
+    image: traefik
+    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_traefik
+
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik:/etc/traefik
+      - ./.data/traefik/logs:/logs
+      - ./cert/_.${DOMAIN}:/etc/cert
+
+    environment:
+      - TZ=Europe/Budapest
+      - DO_AUTH_TOKEN=${DO_AUTH_TOKEN}
+
+    networks:
+      judo:
+        aliases:
+          - traefik.${DOMAIN}
+
+    labels:
+      - traefik.enable=true
+      - traefik.backend=traefik-api
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+
+      # SSL configuration
+      - traefik.http.routers.traefik-ssl.entryPoints=https
+      - traefik.http.routers.traefik-ssl.rule=host(`traefik.${DOMAIN}`)
+      - traefik.http.routers.traefik-ssl.middlewares=sso@file
+      - traefik.http.routers.traefik-ssl.tls=true
+ 
+#    depends_on:
+#      traefik-fa:
+#        condition: service_healthy
+
+# #############################################################################
+#   Traefik Forward Auth (SSO)
+#   When sso@file middleware is given to a service, have to be authenticated.
+# #############################################################################
+
+  traefik-fa:
+    image: thomseddon/traefik-forward-auth
+    container_name: ${COMPOSE_PROJECT_NAME}_traefik-fa
+    restart: unless-stopped
+
+    volumes:
+      - ./config/traefik/forward.ini:/forward.ini
+      - ./cert/minica.pem:/etc/ssl/certs/ca-certificates.crt
+
+    environment:
+      - CONFIG=/forward.ini
+
+    dns_search: ${DOMAIN}
+    networks:
+      judo:
+        aliases:
+          - auth.${DOMAIN}
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.backend=traefik-fa
+      - traefik.http.services.traefik-fa.loadBalancer.server.port=4181
+
+      # SSL configuration
+      - traefik.http.routers.traefik-fa-ssl.entryPoints=https
+      - traefik.http.routers.traefik-fa-ssl.rule=host(`auth.${DOMAIN}`)
+      - traefik.http.routers.traefik-fa-ssl.middlewares=sso@file
+      - traefik.http.routers.traefik-fa-ssl.tls=true
+
+    depends_on:
+      keycloak:
+        condition: service_healthy
+
+# #############################################################################
+#   Who Am I - Test service. It can be called from authentication.
+# #############################################################################
+
+  whoami:
+    image: emilevauge/whoami
+    container_name: ${COMPOSE_PROJECT_NAME}_whoami
+    restart: unless-stopped
+    networks:
+      judo:
+        aliases:
+          - whoami.${DOMAIN}
+
+    labels:
+      - traefik.enable=true
+      - traefik.backend=whoami
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+
+      # SSL configuration
+      - traefik.http.routers.whoami.entryPoints=https
+      - traefik.http.routers.whoami.rule=host(`whoami.${DOMAIN}`)
+#      - traefik.http.routers.whoami.middlewares=sso@file
+      - traefik.http.routers.whoami.tls=true
+
+# #############################################################################
+#   Customized postgres
+# #############################################################################
+
+  postgres:
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    build: ./postgres-hypopg
+    restart: unless-stopped
+    env_file:
+      - ./config/postgres.env
+    ports:
+      - target: 5432
+        published: 5432
+        mode: host
+
+    networks:
+      judo:
+        aliases:
+          - postgres.${DOMAIN}
+
+    volumes:
+      - ./.data/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U judo"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+
+# #############################################################################
+#   Keycloak
+# #############################################################################
+
+  keycloak:
+    container_name: ${COMPOSE_PROJECT_NAME}_keycloak    
+    image: quay.io/keycloak/keycloak:12.0.4
+    restart: unless-stopped
+
+    env_file:
+      - ./config/keycloak.env
+
+    environment:
+      - KEYCLOAK_FRONTEND_URL=https://keycloak.${DOMAIN}/auth
+      - PROXY_ADDRESS_FORWARDING=true
+
+    networks:
+      judo:
+        aliases:
+          - keycloak.${DOMAIN}
+
+    domainname: "keycloak.${DOMAIN}"
+    hostname: "keycloak"
+    dns_search: ${DOMAIN}
+
+    command:
+      [
+        '-b',
+        '0.0.0.0',  
+        '-Djboss.http.port=80',
+        '-Djboss.https.port=443',
+        '-Djboss.socket.binding.port-offset=0',
+        '-Dkeycloak.migration.action=import',
+        '-Dkeycloak.migration.provider=dir',
+        '-Dkeycloak.migration.dir=/realm-config',
+        '-Dkeycloak.migration.strategy=IGNORE_EXISTING',
+      ]
+      
+    volumes:
+       - ./cert/_.${DOMAIN}/cert.pem:/etc/x509/https/tls.crt
+       - ./cert/_.${DOMAIN}/key.pem:/etc/x509/https/tls.key
+       - ./config/keycloak-realm-config:/realm-config
+
+    labels:
+      - traefik.enable=true
+      - traefik.backend=keycloak
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.http.services.keycloak.loadBalancer.server.port=80
+
+      # SSL configuration
+      - traefik.http.routers.keycloak.entryPoints=https
+      - traefik.http.routers.keycloak.rule=host(`keycloak.${DOMAIN}`)
+      - traefik.http.routers.keycloak.tls=true
+
+    healthcheck:
+       test: ["CMD-SHELL", "curl -U --fail http://localhost:80/auth/realms/master"]
+       interval: 10s
+       timeout: 1s
+       retries: 30
+       
+    depends_on:
+      postgres:
+        condition: service_healthy
+        
+        
+
+

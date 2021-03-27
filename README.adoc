@@ -1,0 +1,221 @@
+# Traefik Keycloak SSO Auth reverse proxy Template
+
+Good title. I like it. It means nothing, and it means everything if wanna deploy some fancy services together on the internet with some kind of security.
+
+Maybe it seems difficult. Because it's a difficult. I've spent lot of hour to make it happen, so I decided to share it. I found tons of example for the isolated parts of features, but nothing that complete. Maybe it's interesting. But it's not if you prefer some out of box 
+kubernetes solution or wanna pays tons of money for it as a service.
+
+As a matter of fact I'm a lazy fat poor guy who don't wanna pay for every service for that very rich corporations which rip off you for relatively basic things. Yeah I know, they are the masters of the universe, and forget everything they will care for you a lot! If you haven't see tha movie https://www.imdb.com/title/tt9893250/[I care a lot] I recommend it :) 
+
+Another reason is sometimes there are some clients whoes do not wanna risc their 
+data to travel over public internet, they have their infrustructure and they are happy - so there is no GCloud, Amazon, Azure. No cloud,
+no rain, an we know the water can do some serious demage wih electronic devices.
+Is this a problem? Not at all! Kubernetes, docker, rancher can be executed in bare metal. Cool.
+
+Most of the applications doesn't need to serve the whole china's populations, or no need for big cloud clusters or low latency reactive streams. Maybe you are a simple sista/bro as me who only wanna deploy some boring business service, which helps to buy gadgets and food for your family. 
+My very big problem is nobody pays for `hello world` or `pet store`, so I have to develop a little more diffcult applications than that. But fortunatelly not a complete datacenter or NASA satelite tracking solution. 
+But I'm lazy so we are developing some very sophisticated modelling stuff called https://judo.codes[JUDO]. I hope in the future Gartner's prediction will become true - and I haven't do the boring programming stuffz. I wanna draw. Boxes! Lines and boxes! I can draw boxes in modeller! Everybody like boxes! And the application is writing itself, and no other thing really matters! :) So I can deploy my boxes and I can login with my facebook within it! Oh yeah, my karma is complete!
+
+Ready to learn new things. It's good isn't it?
+
+I will provide an example, how to setup a docker-compose stack that provides a Traefik instance to reverse proxy services with SSO authorized routes inside a docker stack. Huh, long sentence. This very long title again in a little bit longer sentence.
+
+The SSO using an embedded keycloak IDM server that let makes it happen. It authenticates you, checking your ID card and photo, retina. 
+If you set up checking your multi x-factor identity. It can be configured as an Enterprise (sic) radius based SSO solution. (yeah I 
+know it's not fancy in this cloud world)
+
+So it can be used to limit access for administrative sites, statistical services, databases etc. So you are in your safe garden!
+So you can start to concentrate your important work, your Springboot, JHypster, Karaf or Microprofile applications. Or not. Maybe you will use PHP, Python or NodeJS app - Sorry for the incomplete list. Don't care, I'm not always pool correct. But good news. Every platform 
+gave tons of example how to use your current token!
+
+Keycloak have tons of option which can be done wrong, so you can set to use google or any other OpenID authentication provider. (over keycloak, or auth forwarder itself your choice, your life) As the project name suggests it helps to solve complicated time consuming settings and trials for a deployment solutions. The main goal is not a full production ready solution - but because maybe I've already mention I'm a big fat lazy guy, so I will do some settings change and deploy to a bare metal which cannot be accessed from outside world, so there is no risc :)- So this all stuff has educational purposes and make good (or not to good) example of materializing different standards as a system. So you are allow to borrow any part of. I've also done that, just put pieces together a little bit different.
+
+My goal is to make compact and reusable solution for multi service containers, every container have own subdomains and HTTP ports and can be addressed with the container'name as subdomain - I'm lazy to remember ports and IP's. 
+
+It is made with docker-compose and not for kubernetes, because it's not about containers itself. Kubernetes is cool stuff if you are making High Availablity performant systems (and need several instances to process workloads), but I'm getting my payment for not that large applications. 
+
+My assumption if you read that title and you are reading this lines (my condolences), you are confident about docker and you have your 5 cents about it. If not, it's the time. Without container the life is harder. I'm fat lazy old guy, but the best part of IT industry in the last 20 years is the containers.
+
+So too much of letters. Every body likes boxes! So here it is:
+
+
+[ditaa]
+----
+                   +-------------------------+
+                +--+ unsecured.localtest.me  |
+                |  +------------+------------+
+                |               ^                         +-----------------------------------------+
++----------+    v               |                         |                   authenticated         |
+| Client 1 |----+               |                         |                                         |
++----------+    |               |                         v                                         |
+                |      +--------+--------+       +--------+--------+                     +----------+----------+          
++----------+    |      |  Reverse proxy  |       | Auth forwarder  |  not authenticated  |    IDM (Keycloak)   |
+| Client 2 |----+----->|    (Traefik)    +------>+  (traefik AF)   +-------------------->+                     |
++----------+    |      | *.localtest.me  |       |auth.localtest.me|                     |keycloak.localtest.me|
+                |      +--------+--------+       +--------+--------+                     +----------+----------+
++----------+    |                                         |                 
+| Client 3 |----+                                         | authenticated        
++----------+    ^                                         v
+                |                            +------------+----------+
+                +----------------------------| secured.localtest.me  |
+                                             +-----------------------+
+
+----
+
+
+My boss (no, not the God), always says if there is not a command which can be executed immediately to collect the easy success, 
+you will be bored and will not read all of this very exciting documentation. So the other very important stuff is here.
+
+Meybe I forgot to mention, but `docker` and `docker-compose` have to be installed. And because the 80 and 443 port are below 1000, 
+some system allow only to run it with root access. If you are not your system's God, or don't wanna be, you have to edit the 
+config files a little bit and set ports to upper region. On that case please read the boring configuration documentations 
+before run. But maybe docker daemon is your hardwre's God. On that case don't panic, just type.
+
+This template is executable, can be run with:
+
+. Create certificate
++
+--
+```
+cd cert
+./cert-local.sh
+```
+It create seld-signed multi domain certificate, which valid for `*.localtest.me`. it have to be done one time, after this the certificate will have a validity of 2 years and 30 days.
+Nice domain, localtest.me. Its proactive, you wanna tests it, it asks for it :) So guys, I love you, thanks. https://readme.localtest.me/[localtest.me]
+
+--
++
+. Import the CA into OS keychain. Usally double click in the `minica.pem` is enough. But its OS and Browser dependent. When this CA is imported all other generated certificate in browser will be valid.
+
+. Start compose
++
+--
+```
+docker compose up
+```
+--
+
+### Some explanation - what the heck is this?
+
+There is a `whoami` named service which is exposed as https://whoami.localtest.me . The container can be accessed with authentication
+only, so the site redirected to https://keycloak.localtest.me and after a successfull authentication the whoami container is accessible over https. Sound easy right? Not at all :) To un derstand how it works some explanation is required. 
+
+
+### The reverse proxy
+
+Reverse. What? I have a keyhole and an address and I can access a lot of service without knowing where it is and how. So cool. I haven't
+know every single port number, IP's and other boring details. See the boxes! The flow is there! So time for some professional grade text.
+
+The term reverse proxy (see: Load Balancer) is normally applied to a service that sits in front of one or more servers (such as a webserver), accepting requests from clients for resources located on the server(s) - so kitty picture can travel over the wire with lightnig speed. From the client point of view, the reverse proxy appears to be the web server and so is totally transparent to the remote user. In our case thare is services inside the compose containers
+which can be accessed over a subdomain (or context path. Your choice, your life. But be carefull, lot of fancy client technologies 
+without names don't care and wanna get the whole root path). 
+
+
+### OpenID connect
+
+Yeah! It is baby! I have facebook, google, github, so I have a tons of OpenID auth provider and 
+Identity manager - like facebook, they KNOW - better than me I'm the person and I can have access to my very own systems.
+
+OpenID Connect is a simple identity layer on top of the OAuth 2.0 protocol, which allows computing clients to verify the identity of an end-user based on the authentication performed by an authorization server, as well as to obtain basic profile information about the end-user in an interoperable and REST-like manner. In technical terms, OpenID Connect specifies a RESTful HTTP API, using JSON as a data format.
+
+OpenID Connect allows a range of kinds of clients, including Web-based, mobile, and JavaScript clients, to request and receive information about authenticated sessions and end-users. The specification suite is extensible, supporting optional features such as encryption of identity data, discovery of OpenID Providers, and session management. Yes, that whole stuff needed to be able to login one time and later my every service can recognize me over my browser session and accept my identity.
+
+### X509 Certificates
+
+Nice that we have a HTTP protocol to communicate with servers. But how can be it secure enough to protect our digital freedom?
+The better question is if I store my user's name in a Keycloak server what part of GDPR I violate? Do you know? Or do you have your own Dr. Gonzo to help find your legal way?
+
+In cryptography, X.509 is a standard defining the format of public key certificates. X.509 certificates are used in many Internet protocols, including TLS/SSL, which is the basis for HTTPS, the secure protocol for browsing the web. They are also used in offline applications, like electronic signatures. An X.509 certificate contains a public key and an identity (a hostname, or an organization, or an individual), and is either signed by a certificate authority or self-signed - as in our test case. When a certificate is signed by a trusted certificate authority, or validated by other means, someone holding that certificate can rely on the public key it contains to establish secure communications with another party, or validate documents digitally signed by the corresponding private key. Huh, whatever. My browser crying their eyes if I haven't got one valid, so better to have one. And it is 21th centaury. In my watch I have enough horse power to be able to forget clean text. Clean text is not fancy like clean coding. 
+
+### Single sing-on (SSO - not S.O.S - maybe you are old enogh as me to know ABBA)
+
+It's can be cool if any service inside or slice of container universe can be accessed after a successful authentication, right?
+Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors. We are lazy enough to type or password once? Isn't it?
+
+
+## Configuration
+
+So, you are the guy, who thinks differently and the default given template isnn't enough good for you. Oh. Okay. Maybe. Let's do it.
+
+
+### .env file
+
+Its goal to store every enviromental parameters. So we are storing there our network and domain name now. But! It's for
+`docker-compose.yaml` only. There are other configurations which referencing the domain name. So its's the best if you list it
+and change it. (or using the fency https://en.wikipedia.org/wiki/Sed[sed] based find and replace tool from 1973. Thank you Mr. Lee E. MacMahon)
+
+```
+./update-domain.sh example.com
+```
+
+It replace the original domain defined in .env file in all files where it's defined. I'm lazy again. Its boring. I would like to draw boxes. Dont forget the certification is another script, so when the domain changed, please change it!
+
+
+## Create certificates
+
+The whole solution uses certifications. Imagine a certification is a box of key :) yeah, boxes. The `cert` directory contains a https://github.com/jsha/minica[minica] docker based script to create self
+signed wildcard domain SSL cert by default. 
+Wildcard cert means there is one key rule every key. It will be valid for every subdomain in your domaun. Fine yeah cool. 
+But if you like to create keys or you are a poor bastard who haven't got tons of money. Hmmm. Interesting. It's https://comodosslstore.com/promoads/positivewildcardssl.aspx?gclid=Cj0KCQjwjPaCBhDkARIsAISZN7RUjJKJRMIyDRMGQw45KCHfBxBNVDA_Se9hV5iJcs_pkdKkCQWT5r4aAmTXEALw_wcB[cheaper] than expected now. Okay go and buy one and put it into `cert/ _.<domain>` directory.
+
+If you wanna create `./cert-local.sh` script contains example how to generate self signed multi domain CA's.
+
+Another solution is Let's encrypt. The traefik supports it with certbot renewal. What the hack is Let's encrypt?
+Imagine a world in the past, where developers do not wanna pay certification taxes to very-sign and comodo for
+every pages. That was the golden age of the plain text http. With some middle man attack or with some server with promicious mode ethernet card can collect tons of password in a sec. Ooo, I miss it :) But some companies does not like
+that constantly have problems, everybody have security problems and always waiting for solutions from service providers and browsers.
+The problem cannot solved by them. So they decided that making some service which is free and everybody can get full valid certification - not some self signed one. So the Fellowship of the rings borns! It can be used for public service. The validation methods are simple. 
+Some time interval they checks the domain which Let's encrypt cert generated for with DNS-01 challange (it validates the domain have the key in a TXT record) or HTTP-01 challange where the web server have to serve http://<YOUR_DOMAIN>/.well-known/acme-challenge/<TOKEN> .
+So its cool. When you have public IP and open port or run in the cloud.
+
+IMPORTANT: Do not use self-signed certificate for production systems. For that there will be extension for let's encrypt example. 
+
+### docer-compose.yaml
+
+It is your description of countainer. I'm n ot sure that you care how it works. You yust wanna add a new service. You can do it. Yeeh.
+
+
+#### Add service
+
+
+```
+  whoami:
+    image: emilevauge/whoami
+    container_name: ${COMPOSE_PROJECT_NAME}_whoami <1>
+    restart: unless-stopped <2>
+    networks: 
+      judo: <3>
+        aliases:
+          - whoami.${DOMAIN} <4>
+
+    labels:
+      - traefik.enable=true <5>
+      - traefik.backend=whoami <6>
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo <7>
+
+      # SSL configuration
+      - traefik.http.routers.whoami.entryPoints=https <8>
+      - traefik.http.routers.whoami.rule=host(`whoami.${DOMAIN}`) <9>
+      - traefik.http.routers.whoami.middlewares=sso@file <10>
+      - traefik.http.routers.whoami.tls=true <11>
+```
+<1> Container name created from project name + any name. 
+<2> Run while not stopped. If you make compose in daemon mode, the restart wiill not stop the rock
+<3> Network name is JUDO. I know, it is a cheap advertisement, but I'm a as you know a fat old lazy guy.
+<4> Alias. Importoant is some container (for example keycloak). Without it the internal name resolution is not okay,
+it gives 127.0.0.1 and it will point to wrong aservice. So in container the domain name have to be resolvable to
+docker network address.
+<5> Put it to reverse proxy context
+<6> Service name is referencesd by the router.
+<7> Network is defined for traefik routing. It have to be prfixed with the project name.
+<8> It is accessible over https. When trying to access as http, it will replace to https prefix. It is done by
+traedfik 
+<9> Host name to listen to. It will be the domain name of host. Here is the place if you wanna make some confusion and making different name as the container name.
+<10> The middleware sse is defined in `config/traefik/dynamic_conf.toml`. It can be edited - on that case its reloaded dynamically, Or
+you can translate it to label. I've using that way in my IOT setup. But its a relative little hell. Very long strings, hard to manage,
+so config files are better place, but you cannot use nev variable substitution.
+<11> Its SSL. We are encoded. Good lock clean text password miners!
+
+When the middleware removed SSO athentication is not required. The Badur's gate is open for everyone. So consider it to secure if there is
+not inner security in service or a public site.
+
