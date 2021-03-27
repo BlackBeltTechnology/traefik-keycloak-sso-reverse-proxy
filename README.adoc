@@ -1,34 +1,32 @@
 # Traefik Keycloak SSO Auth reverse proxy Template
 
-Good title. I like it. It means nothing, and it means everything if wanna deploy some fancy services together on the internet with some kind of security.
+Good title. I like it. It means nothing, and it means everything if you wanna deploy some fancy services together on the internet with some kind of security.
 
-Maybe it seems difficult. Because it's a difficult. I've spent lot of hour to make it happen, so I decided to share it. I found tons of example for the isolated parts of features, but nothing that complete. Maybe it's interesting. But it's not if you prefer some out of box 
-kubernetes solution or wanna pays tons of money for it as a service.
+Maybe it seems difficult. Because it's difficult. I've spent lot of hour to make it happen, so I decided to share it. I found tons of examples for the isolated parts of features, but nothing that complete. Maybe it's interesting, but it's not if you prefer some out of box kubernetes solution or wanna pay tons of money for it as a service.
 
-As a matter of fact I'm a lazy fat poor guy who don't wanna pay for every service for that very rich corporations which rip off you for relatively basic things. Yeah I know, they are the masters of the universe, and forget everything they will care for you a lot! If you haven't see tha movie https://www.imdb.com/title/tt9893250/[I care a lot] I recommend it :) 
+As a matter of fact I'm a lazy fat poor guy who don't wanna pay for every service for that very rich corporations, which rip off me for relatively basic things. Yeah I know, they are the masters of the universe, and forget everything, they will care for you a lot! If you haven't see tha movie https://www.imdb.com/title/tt9893250/[I care a lot] I recommend it :) 
 
-Another reason is sometimes there are some clients whoes do not wanna risc their 
-data to travel over public internet, they have their infrustructure and they are happy - so there is no GCloud, Amazon, Azure. No cloud,
-no rain, an we know the water can do some serious demage wih electronic devices.
+Another reason is sometimes there are some clients whoes does not wanna risk their 
+data to travel over public internet, they have their infrustructure and they are happy with it - so there is no GCloud, Amazon, Azure. No cloud, no rain, and we know the water can do some serious demage wih electronic devices.
 Is this a problem? Not at all! Kubernetes, docker, rancher can be executed in bare metal. Cool.
 
-Most of the applications doesn't need to serve the whole china's populations, or no need for big cloud clusters or low latency reactive streams. Maybe you are a simple sista/bro as me who only wanna deploy some boring business service, which helps to buy gadgets and food for your family. 
-My very big problem is nobody pays for `hello world` or `pet store`, so I have to develop a little more diffcult applications than that. But fortunatelly not a complete datacenter or NASA satelite tracking solution. 
-But I'm lazy so we are developing some very sophisticated modelling stuff called https://judo.codes[JUDO]. I hope in the future Gartner's prediction will become true - and I haven't do the boring programming stuffz. I wanna draw. Boxes! Lines and boxes! I can draw boxes in modeller! Everybody like boxes! And the application is writing itself, and no other thing really matters! :) So I can deploy my boxes and I can login with my facebook within it! Oh yeah, my karma is complete!
+Most of the applications doesn't need to serve the whole china's populations, or no need for big cloud clusters or low latency reactive streams. Maybe you are a simple sista/bro as me who only want to deploy some boring business service, which helps to buy gadgets and food for amily. 
+My very big problem is nobody pays for https://en.wikipedia.org/wiki/%22Hello,_World!%22_program[hello world] or https://www.oracle.com/java/technologies/petstore-v1312.html[pet store] so I have to develop a little more diffcult applications than that. But fortunatelly, not a complete datacenter or NASA satelite tracking solution I have to make. 
+I'm lazy, so we are developing some very sophisticated modelling stuff called https://judo.codes[JUDO] in our company. I hope in the future Gartner's prediction will become true - and I haven't do the boring programming stuffz. I wanna draw. Boxes! Lines and boxes! I can draw boxes in modeller! Everybody like boxes! And the application is writing itself, and no other thing really matters! :) So I can deploy my boxes and I can login with my facebook within it! Oh yeah, my karma is complete!
 
 Ready to learn new things. It's good isn't it?
 
-I will provide an example, how to setup a docker-compose stack that provides a Traefik instance to reverse proxy services with SSO authorized routes inside a docker stack. Huh, long sentence. This very long title again in a little bit longer sentence.
+I will provide an example, how to setup a docker-compose stack that provides a Traefik instance to reverse proxy services with SSO authorized routes inside a docker stack. Huh, long sentence. This very long title appear again in a little bit longer sentence.
 
-The SSO using an embedded keycloak IDM server that let makes it happen. It authenticates you, checking your ID card and photo, retina. 
-If you set up checking your multi x-factor identity. It can be configured as an Enterprise (sic) radius based SSO solution. (yeah I 
+The SSO using an embedded keycloak IDM server that let makes it happen. It authenticates you, checking your ID card, photo, retina and brainwaves. 
+If you set up, checking your multi x-factor identity. It can be configured as an Enterprise (sic) radius based SSO solution. (yeah I 
 know it's not fancy in this cloud world)
 
 So it can be used to limit access for administrative sites, statistical services, databases etc. So you are in your safe garden!
 So you can start to concentrate your important work, your Springboot, JHypster, Karaf or Microprofile applications. Or not. Maybe you will use PHP, Python or NodeJS app - Sorry for the incomplete list. Don't care, I'm not always pool correct. But good news. Every platform 
-gave tons of example how to use your current token!
+gives tons of examples how to use your current token!
 
-Keycloak have tons of option which can be done wrong, so you can set to use google or any other OpenID authentication provider. (over keycloak, or auth forwarder itself your choice, your life) As the project name suggests it helps to solve complicated time consuming settings and trials for a deployment solutions. The main goal is not a full production ready solution - but because maybe I've already mention I'm a big fat lazy guy, so I will do some settings change and deploy to a bare metal which cannot be accessed from outside world, so there is no risc :)- So this all stuff has educational purposes and make good (or not to good) example of materializing different standards as a system. So you are allow to borrow any part of. I've also done that, just put pieces together a little bit different.
+Keycloak have tons of options which can be done wrong, so you can set to use google or any other OpenID authentication provider. (over keycloak, or auth forwarder itself, your choice, your life) As the project name suggests it helps to solve complicated time consuming settings and trials for a deployment solutions. The main goal is not a full production ready solution - but because maybe I've already mention I'm a big fat lazy guy, so I will do some settings change and deploy it to a bare metal which cannot be accessed from outside world, so there is no risk :)- So this all stuff has educational purposes and make good (or not to good) example of materializing different standards as a system. So you are allow to borrow any part of. I've also done that, just put pieces together a little bit different.
 
 My goal is to make compact and reusable solution for multi service containers, every container have own subdomains and HTTP ports and can be addressed with the container'name as subdomain - I'm lazy to remember ports and IP's. 
 
@@ -59,7 +57,6 @@ So too much of letters. Every body likes boxes! So here it is:
                 |                            +------------+----------+
                 +----------------------------| secured.localtest.me  |
                                              +-----------------------+
-
 ----
 
 
@@ -95,26 +92,31 @@ docker compose up
 ```
 --
 
+The user is admin@example.com and the password is `password`. Yes. Its true. The top star pasword is used as password.
+Totally unsecure. So please change it in keycloak. I beg you.
+
+But if you are logged in. Sometimes you wanna leave your garden. You have the sword, any service can accep the `/_oauth/logout` - and your keys coming droped to the ocean.
+
+
 ### Some explanation - what the heck is this?
 
-There is a `whoami` named service which is exposed as https://whoami.localtest.me . The container can be accessed with authentication
+There is a https://www.youtube.com/watch?v=xAkHiAqtunQ&ab_channel=5700102z[whoami] named service which is exposed as https://whoami.localtest.me . The container can be accessed with authentication
 only, so the site redirected to https://keycloak.localtest.me and after a successfull authentication the whoami container is accessible over https. Sound easy right? Not at all :) To un derstand how it works some explanation is required. 
 
 
 ### The reverse proxy
 
-Reverse. What? I have a keyhole and an address and I can access a lot of service without knowing where it is and how. So cool. I haven't
-know every single port number, IP's and other boring details. See the boxes! The flow is there! So time for some professional grade text.
+Reverse. What? I have a keyhole and an address and I can access a lot of services without knowing where they are and how. So cool. I must not know every single port number, IP's and other boring details. See the boxes! The flow is there! So time for some professional grade text.
 
 The term reverse proxy (see: Load Balancer) is normally applied to a service that sits in front of one or more servers (such as a webserver), accepting requests from clients for resources located on the server(s) - so kitty picture can travel over the wire with lightnig speed. From the client point of view, the reverse proxy appears to be the web server and so is totally transparent to the remote user. In our case thare is services inside the compose containers
 which can be accessed over a subdomain (or context path. Your choice, your life. But be carefull, lot of fancy client technologies 
-without names don't care and wanna get the whole root path). 
+- without any names, khmm - don't care and wanna get the whole root path). 
 
 
 ### OpenID connect
 
 Yeah! It is baby! I have facebook, google, github, so I have a tons of OpenID auth provider and 
-Identity manager - like facebook, they KNOW - better than me I'm the person and I can have access to my very own systems.
+Identity manager - like facebook, they KNOW me - better than me - and I'm the person and I can have access to my very own systems.
 
 OpenID Connect is a simple identity layer on top of the OAuth 2.0 protocol, which allows computing clients to verify the identity of an end-user based on the authentication performed by an authorization server, as well as to obtain basic profile information about the end-user in an interoperable and REST-like manner. In technical terms, OpenID Connect specifies a RESTful HTTP API, using JSON as a data format.
 
@@ -125,17 +127,21 @@ OpenID Connect allows a range of kinds of clients, including Web-based, mobile, 
 Nice that we have a HTTP protocol to communicate with servers. But how can be it secure enough to protect our digital freedom?
 The better question is if I store my user's name in a Keycloak server what part of GDPR I violate? Do you know? Or do you have your own Dr. Gonzo to help find your legal way?
 
-In cryptography, X.509 is a standard defining the format of public key certificates. X.509 certificates are used in many Internet protocols, including TLS/SSL, which is the basis for HTTPS, the secure protocol for browsing the web. They are also used in offline applications, like electronic signatures. An X.509 certificate contains a public key and an identity (a hostname, or an organization, or an individual), and is either signed by a certificate authority or self-signed - as in our test case. When a certificate is signed by a trusted certificate authority, or validated by other means, someone holding that certificate can rely on the public key it contains to establish secure communications with another party, or validate documents digitally signed by the corresponding private key. Huh, whatever. My browser crying their eyes if I haven't got one valid, so better to have one. And it is 21th centaury. In my watch I have enough horse power to be able to forget clean text. Clean text is not fancy like clean coding. 
+In cryptography, X.509 is a standard defining the format of public key certificates. X.509 certificates are used in many Internet protocols, including TLS/SSL, which is the basis for HTTPS, the secure protocol for browsing the web. They are also used in offline applications, like electronic signatures. An X.509 certificate contains a public key and an identity (a hostname, or an organization, or an individual), and is either signed by a certificate authority or self-signed - as in our test case. When a certificate is signed by a trusted certificate authority, or validated by other means, someone holding that certificate can rely on the public key it contains to establish secure communications with another party, or validate documents digitally signed by the corresponding private key. Huh, whatever. My browser crying their eyes out if I haven't got one valid, so better to have one. And it is 21th century. In my smart watch (if sombody knows me knows I'm lying now - because I don't have one) I have enough horse power to be able to forget clear text. Clear 
+text is not fancy like clean coding. 
 
-### Single sing-on (SSO - not S.O.S - maybe you are old enogh as me to know ABBA)
+### Single sing-on (SSO - not https://www.youtube.com/watch?v=cvChjHcABPA&ab_channel=AbbaVEVO[S.O.S] - maybe you are old enogh as me to know ABBA)
 
-It's can be cool if any service inside or slice of container universe can be accessed after a successful authentication, right?
-Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors. We are lazy enough to type or password once? Isn't it?
+It's can be cool if any service inside or a slice of container universe can be accessed after a successful authentication, right?
+Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors. We are lazy enough to type password more than once? Isn't it?
 
 
 ## Configuration
 
-So, you are the guy, who thinks differently and the default given template isnn't enough good for you. Oh. Okay. Maybe. Let's do it.
+So, you are the AFAB/Agender/Aliagender/AMAB/Androgyne/Aporagender/Bigender/Binarism/Body dysphoria
+/Boi/Butch/Cisgender/Cisnormativity/Cissexism/Demiboy/Demigender/Demigirl/Dyadic/Feminine-of-center
+/Feminine-presenting/Girl/Guy, who thinks differently and the default given template isnn't enough good for you. 
+Oh. Okay. Maybe. Let's do it.
 
 
 ### .env file
@@ -218,4 +224,455 @@ so config files are better place, but you cannot use nev variable substitution.
 
 When the middleware removed SSO athentication is not required. The Badur's gate is open for everyone. So consider it to secure if there is
 not inner security in service or a public site.
+
+## Directory layout
+
+Heh. It sound professional. So again, I'm a lazy fat old fart, so for me if there is some logic in the directory structure.
+
+- config  - configuration, environment variables which are referenced from compose.
+- build - There are some docker definition for images which is not get directly from image, because we are making some changes inside of it.
+- cert - the certificates used by containers. I do not recommend to persist certificate in a version control system. It can cause that your
+user data can be listed in https://haveibeenpwned.com/[Have I been Pawned?]
+- .data - containers persist their state there. Hah. Yeah sometimes there are some states which cannot be forget between restarts. Or you
+are the One who setup everything after a start? :) Yes, I know containers. But kubernetes also have PersistentClaims. And some
+storage hardware factory have to get some money. Am I right? 
+And sometimes some side effects have to be hided inside a monad :) Practically it is not part of a version control sytem. Oooo. Everybody
+knows github :) You are here. So I'm sure you using one.
+
+## Containers
+
+### Traefik
+
+The reverse proxy itelf. It listens on the port 80 and 443. Traefik listens for containers (thats the reason that docker socket have to be 
+mounted) and when see some marker label on container definition it will get the container and making the route rules for it. Its very similar
+as OSGi whiteboard patter. So you tell me don't know what the OSGi is? You prefer microservices instead of it? Or you hear that
+its a blackmagic technology? Either reason, you can check https://www.youtube.com/watch?v=PYXT5y8gwAg&ab_channel=codecentricAG . One of Netflix 
+department can operate the 1/10th of microsevice cost. It sound good, right? Maybe the miroservice only just one of the several solutions 
+and not right for every problem? Okay, okay, you right, I do not know anything.
+
+#### Compose:
+
+
+```
+  traefik:
+    image: traefik
+    restart: unless-stopped
+    container_name: ${COMPOSE_PROJECT_NAME}_traefik
+
+    ports:
+      - "0.0.0.0:80:80"  <1>
+      - "0.0.0.0:443:443" <2>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro <3>
+      - ./config/traefik:/etc/traefik <4>
+      - ./.data/traefik/logs:/logs <5>
+      - ./cert/_.${DOMAIN}:/etc/cert <6>
+
+    environment:
+      - TZ=Europe/Budapest <7>
+
+    networks:
+      judo:
+        aliases:
+          - traefik.${DOMAIN}
+
+    labels:
+      - traefik.enable=true
+      - traefik.backend=traefik-api
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.http.services.traefik.loadbalancer.server.port=8080 <8>
+
+      # SSL configuration
+      - traefik.http.routers.traefik-ssl.entryPoints=https
+      - traefik.http.routers.traefik-ssl.rule=host(`traefik.${DOMAIN}`)
+      - traefik.http.routers.traefik-ssl.middlewares=sso@file
+      - traefik.http.routers.traefik-ssl.tls=true
+ 
+```
+
+<1> http port listens all of available newtork on host machine. It only listens, because if you haven't got the reflex to use `https` by default, it redirects to https variant of the very same URL.
+<2> https port listens all of available network on hist machine. yeah. The dance begins here. I will tell you how it operates. If you change it
+I recommend change the URL-s postfixed to that port everywhere. So read this doc, will find it. The reward will be a working system. :)
+<3> The socket of docker mounted
+<4> Some configuration. Its loaded from file system. If you prefer you can use as label. In my first version I had that. It was not a good idea -
+Oh you realy think that I do not make mastikes? If you think that, YOU did make a mistake :) Its importatnt, because in the toml file there is a file reference, and if this volume mount does not exists that path is invalid.
+<5> Logs. Oh. In the configuration have to be switched on. It will make logs. I'm not sure its neccessary, because in the container world there is
+https://www.elastic.co/what-is/elk-stack[ELK stack], so you dont need to store logs inside text files anymore. But if you like to use grep / awk, than good for you. Do it. In a near future project I will extend this with https://www.elastic.co/what-is/elk-stack[ELK], https://prometheus.io/[Prometheus], https://www.influxdata.com/[InfluxDB] and https://grafana.com/[Grafana] as a complete monitoring setup. Aaaaand you can see boxes!! Color boxes!!! One thing is better than boxes! The color boxes! And sometimes graphs. Did you know that the good graph always shows increasing trends? Hahh. If you don't think you are not a sales person, maybe you are techical guy who thinks the memory usage have to be a flat line. What a mess!
+
+<7> Timezone. Yes. We are in the center of Europe. But our political system will bring us near to the http://www.balkanfanatik.com/[Balkan Fanatik] soon. Oh yes, yes. I'm too liberal fou our unorthodox system.
+
+<8> The port traefik dashboard listens on. Yeah. They have some fancy graph about routes. So trafik handles itself as eny other containers. So routing
+dashboard! https://traefik.localtest.me.
+
+The other labels already mentioned in our hellow world example. 
+
+
+#### traefik.toml:
+
+```
+[log]
+  level = "DEBUG" <1>
+  filePath = "/logs/traefik.log"
+
+[entryPoints]
+  [entryPoints.http] <2>
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"
+
+[api]
+  dashboard = true <3>
+  insecure = true <4>
+
+[providers]
+  [providers.file] <5>
+    filename = "/etc/traefik/dynamic_conf.toml"
+  [providers.docker] 
+    endpoint = "unix:///var/run/docker.sock"
+    watch = true
+    exposedbydefault = false <6>
+    defaultrule = "Host(`{{ .Name }}.localtest.me`)" <7>
+
+[accessLog]
+  filePath = "/logs/access.log" <8>
+  
+```
+
+<1> Log level. It is DEBUG while configuring, After INFO is enoug. There is a bunch of message is not for consuming. Just for digging 
+for errors :) 
+
+<2> The ports mappend as entry point. I know, but above it is telss to Docker. Here it tels for trafeik. You know, like good burocrats everybody 
+have to put ther stamps.
+
+<3> Dashboard enabled - nice graphs. It draws that very routes which have been set up in the configuration.
+
+<4> Insecure - Hehaaaa. Its a lie. Insecured by default, but if yoy see it is protected itself with the sso. Thats so cool that type of Whiteboard 
+extension pattern. Self defense is possible.
+
+<5> Dynamic conf included here. Dynamic config means when you change content it will redeploy routes. It's an interesting thing in
+container, because some schools teach us the container deployed as it is, and it have to be immutable. When you change it, redeploy it. Yeeah, its a kind of thruth. If you can do simple rollover over several machines - can create new ones and after stops old ones. But here we are talking aboute routing where the route decisions can happen here, and you have maybe only just couple - if you don't have https://www.redhat.com/en/engage/openstack-datasheet-20171008?sc_cid=7013a000002DTTyAAO&gclid=CjwKCAjwr_uCBhAFEiwAX8YJgcJy1WV5BH8V-AX26cj1DSk1SLH7jkaMiy07VMcmIy27pMr0uGHR6BoCa8oQAvD_BwE&gclsrc=aw.ds[OpenStack] like rocket science fueled network resource manager infrastructure. Means you have your own cloud at a large in your yard. So one thing you have to check, tha path have to be mounted as volue if you do not wanna repeat the question = I've done right, why it is not working. Same story happendned. Tons of logs and the 3rd line have a little warneng mention that for me. So too much log can cause problems to identify thje real problem.
+
+<6> We are in control! We are the engineer, do not open all of your container by default.
+
+<7> If you dont give a name for your child, it will give you the name of the container. Yes, I know. You are confused why are typing names in the config for containers. Good question. Just to be control. I am the naming God of my services. Thats all. Some narcistic force in play :)
+
+<8> Boring log, log and log again. Yes. Don't care. Just mount or delete the entry. 
+
+#### dynamic_conf.toml:
+
+```
+[tls.stores]
+  [tls.stores.default]
+    [tls.stores.default.defaultCertificate] <1>
+      certFile = "/etc/cert/cert.pem"
+      keyFile  = "/etc/cert/key.pem"
+      
+[http.routers]
+  [http.routers.https-only] <2>
+    entryPoints = ["http"]
+    middlewares = ["httpsredirect"]
+    rule = "HostRegexp(`{host:.+}`)"
+    service = "noop"
+
+[http.services] 
+  [http.services.noop.loadBalancer] <3>
+    [[http.services.noop.loadBalancer.servers]]
+      url = "http://192.168.0.1"
+
+[http.middlewares]
+  [http.middlewares.sso.forwardAuth] <4>
+    address = "http://traefik-fa:4181" <5>
+    authResponseHeaders = ["X-Forwarded-User", "X-WebAuth-User"] <6>
+    trustForwardHeader = "true" <7>
+  [http.middlewares.httpsredirect.redirectScheme] <8>
+    scheme = "https"
+
+```
+
+<1> Certificates - Important, because the SSL encoding are made by this service. Theese certs are the wildcard certificates. When
+you wanna type a lot and make different certs for services, you can do it, but on that case have to make sparate routes for that. I'm too
+lazy and I'm spending that time with my children instead.
+
+<2> The HTTP -> HTTPS redirect magic happens here, redirecting to middleware which redirect at <8>
+
+<3> Its a fallback loadbalancer. Its not required by default. Its only just for as a last chance.
+
+<4> The Middleware. It decides that the request have to be authenticated or let to go to service. This the middleware which is referenced
+as `sso@file` . Do you see the name sso?. After authentication the reposnse message have the token in a cookie. Cookieees! Cookies in boxes. yuppi!
+
+<5> The other magic is the forward auth container is called inside docker network as a host name. It 
+have to match with the container service name. 
+
+<6> https://en.wikipedia.org/wiki/X-Forwarded-For[X-Forwarded-User] - is a standardizad way to mark its a proxy request.It helps forwarder proxy
+to know what is the target after authentication. You know Post It! helps to organize the hell of request streams.
+
+<7> As a matter of fact, I don't know exactly how it operates, but keykloak was not able to operate without it. It is enabling to to get these headers from auth forwarder service and accept it. Maybe forward auth creating extrea headers which is rerquired? Help me out! :)
+
+<8> This translates URL schema to https.
+
+Okay it was long. But Only just think it is long and hard. See the next chapter. It is that makes the real magic. All of stuffs to this point was
+easy as pie. The real hack is after.
+
+### traefik-fa:
+
+Yes. We are here. Center of the universe. Here happens the magic, event horizont reached.
+This decides which is authenticated which is not. If it is misconfigured, than maybe you sell
+your data for some private soldier in the shadow.
+
+```
+  traefik-fa:
+    image: thomseddon/traefik-forward-auth <1>
+    container_name: ${COMPOSE_PROJECT_NAME}_traefik-fa
+    restart: unless-stopped
+
+    volumes:
+      - ./config/traefik/forward.ini:/forward.ini <2>
+      - ./cert/minica.pem:/etc/ssl/certs/ca-certificates.crt <3>
+
+    environment:
+      - CONFIG=/forward.ini <4>
+
+    dns_search: ${DOMAIN} <5>
+    networks:
+      judo:
+        aliases:
+          - auth.${DOMAIN}
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.backend=traefik-fa
+      - traefik.http.services.traefik-fa.loadBalancer.server.port=4181
+
+      # SSL configuration
+      - traefik.http.routers.traefik-fa-ssl.entryPoints=https
+      - traefik.http.routers.traefik-fa-ssl.rule=host(`auth.${DOMAIN}`)
+      - traefik.http.routers.traefik-fa-ssl.middlewares=sso@file
+      - traefik.http.routers.traefik-fa-ssl.tls=true
+
+    depends_on: <6>
+      keycloak:
+        condition: service_healthy
+        
+```
+
+<1> Start with the image. Maybe you are an experienced Load Balancer. You are just tickeling whey this
+unknown reverse proxy was selected, there is a very cool https://github.com/oauth2-proxy/oauth2-proxy[oauth2-proxy]. Its the abolute star. Tons of features, out of box support for some alien technologies. BUT. For me it was not worked. I had CSRF issues, forums does not help to solve it. Heh, dont know  what is is? Its problems with the usage of the certificates on the keys. Yes, it cannot handle well that we get our keys with different pathes, maytbe related that little black magic within traefik about the Proxy header entries. So it was not played nicely with traefik. Maybe there ios some hidden things which was can be set - yeah, tons of options so maybe miss some things. If somebody can do with this 
+installation with oaut2-proxy, give me. I will test it immediately. So chalange is open :)
+
+<2> Config files - later. Patience. The time will come soon.
+
+<3> This settings is mandatory to use very same certification as the trafik uses. The reason is simple. When using local network and domain for that, as mention earlier it casues that the container machines reolves it directly. So it nice if the domain names and the used key is same. OpenID likes that way. If we do in other way, this whole thing became pointless. On that case close this site, delet all keys, use some simple solution, and don't care :). There are some guys in forums crying out allow skipping the domain name mathing on X.509 keychange. Guys! Think about it! Make some security and immediately avoid it, and put some stamp and promise about security became a lie. Oh, this hole is deep :). 
+<4> Config again. Is this some kind of boomerang. No. Here we says. We mounted the config, time to use.
+That the reason of using alias for network name. But ist's not enough. 
+
+<5> Here some short string, which is shows that config is not a bofoon. Just sit there on the silence, and helps to reach the one of most important thing tom work the whole solution. The DNS names not seem too imprtant. But! These lines says to service use internal network aliases to access a service on our given domain. And thats one is an important trick. The 127.0.0.1 is not resolves from the external domain server, instead of container address is resolved. It have to be, because our keycloak server is there - instead of your auth proxy outside, but this whole project long title is about this integration. And booom! The client URL, cookie URL, and certification URL is matching. There is no difference. And the key is used same - you will know that better after read next entry. Yes. I'm stunned that you are reading. Good to know there is people that have that vocation. Good for you. You are destined to be succesfull :) And don't leave me alone here.
+ 
+<6> Healthchek. It's our manager. Care of us. Cares a lot. It helps to orchestrate service start. What is the purpose to start a service when other service not ready to serv our service? So we can put some check there, and the other services uses us, can depends on us. Our service are used just when we are healthy. So we have no Covid or eny other maybe lethal cause, we will not block the whol train.
+
+Other configs not mentioned. The purpose very same as other services, and I'm trying to be compact, avoiding the unnecessarry word, sentences and paragraphs. So don't be rude to point out that I'm a liar.
+
+#### forward.ini:
+
+```
+default-provider = oidc <1>
+
+secret = secret-nonce <2>
+
+providers.oidc.client-id = oauth-proxy <3>
+providers.oidc.client-secret = 72341b6d-7065-4518-a0e4-50ee15025608 <4>
+providers.oidc.issuer-url = https://keycloak.localtest.me/auth/realms/master <5>
+
+log-level = debug <6>
+
+cookie-domain = localtest.me <6>
+auth-host = auth.localtest.me <7>
+
+whitelist = admin@example.com <8>
+
+```
+<1> This tells standard OpenID is used. You can change to google facebok or other auth method. Feel fre to do it. 
+But you have to register an application for that. I hate it. Very time consuming. For facebook I had to make tons of documentation. More time needed for administration, than the technical configuration. Google/ facebook / apple please.
+Is that App development than we are filling a lot of forms? Like ia burocrat? Are you https://en.wikipedia.org/wiki/Vogon[vogons]? Really? Is it the future? And it gives 
+more confifence and security? Screw you! Only I just wanna validate my users by email address, which is initalized by the user. More sensitive information can be extracted from your advertisment cookies!!! Cookies in the Jar,. That cookes are that very few cookie which in not in the box. Oh boxes.
+
+<2> Client secret - it will help to create https://portswigger.net/web-security/csrf/tokens[CSRF] token. The client is signing the key also. It avoid to stole
+the key by a middleware. Don't do any auth in mobile phone without this, because there is some daemons can stole your brand new auth keys ripping off the face of somebody else. A CSRF token is a unique, secret, unpredictable value that is generated by the server-side application and transmitted to the client in such a way that it is included in a subsequent HTTP request made by the client. When the later request is made, the server-side application validates that the request includes the expected token and rejects the request if the token is missing or invalid. CSRF tokens can prevent CSRF attacks by making it impossible for an attacker to construct a fully valid HTTP request suitable for feeding to a victim user. Since the attacker cannot determine or predict the value of a user's CSRF token, they cannot construct a request with all the parameters that are necessary for the application to honor the request. It stores the token in a cookie, so the client will get it and when the next call is coming that cookie conmtains the required keys and can authenticate 
+that the client have the required key.
+
+<3> Client ID used on the IDM - In our case keycloak. So in the keycloak configuration you can find this client! Nice. So bridge is building. Equilibrium is in our door.
+
+<4> OIDC client secret is to use to validate that the forward server can eat from t
+he IDM serve's table.
+
+<5> Issuer URL. Its important. Thats the URL which is accessed by our forwarder services in back channels. Like in
+a movie. The events happen with the service and between the clients, but some validation is made on that back channel, to be able to valide that the user key is really okay. Thats the reason iomportant to match the domain. An intelkigen IDM server don't let to temper that information. It have to match the URL which is used to access IDM (keyclak) from external. So there is the easter egg. When you chage the port of service, have to change that domain too, and have to
+change the keycloak port to be able to acces it from internal network. So there is places.
+
+<6> This is for browser. Browsers allow valid cookies, don't like some foreigner. It can cause some terrosrist attack.
+So for peace it have to be the same domain. And port. Important, when you change port have to change cookie domain too.
+
+<7> Auth host. This service's host name. because the keycloak after authentication have to fill some header data to be able to get back here. Like in Hansel and Greatel with the crumb.
+
+<8> Whitelist. Ahh. So if you  have valid credentials in keycloak it's not enough. Your name have to be here, so we are not enough confidene. The real security is a complete paranoia. :) But the real reason is we don't beleive google facebook.
+There are registered the half of our globe so I'm not sure that if any of them have a facebook account can access our critical services. Maybe I'm paranoid :) But the noises tells me nothing to worry.
+
+And thats all. Ther eare other config options. But its your call to dig deeper in the rabbit hole.
+
+### Keycloak
+
+So our base of our ceredentials. Maybe thats the reason that it is persisted with postgresql. The configurations
+are initaly imported from json. There are some values you can set / change when you change domain or users.
+
+#### Compose
+
+```
+
+  keycloak:
+    container_name: ${COMPOSE_PROJECT_NAME}_keycloak    
+    image: quay.io/keycloak/keycloak:12.0.4
+    restart: unless-stopped
+
+    env_file:
+      - ./config/keycloak.env <1>
+
+    environment:
+      - KEYCLOAK_FRONTEND_URL=https://keycloak.${DOMAIN}/auth <2>
+      - PROXY_ADDRESS_FORWARDING=true <3>
+
+    networks:
+      judo:
+        aliases:
+          - keycloak.${DOMAIN}
+
+    command:
+      [
+        '-b',
+        '0.0.0.0',   <4>
+        '-Djboss.http.port=80', <5>
+        '-Djboss.https.port=443', <6>
+        '-Djboss.socket.binding.port-offset=0', <7>
+        '-Dkeycloak.migration.action=import', <8>
+        '-Dkeycloak.migration.provider=dir',
+        '-Dkeycloak.migration.dir=/realm-config', 
+        '-Dkeycloak.migration.strategy=IGNORE_EXISTING',<9>
+      ]
+      
+    volumes:
+       - ./cert/_.${DOMAIN}/cert.pem:/etc/x509/https/tls.crt <10>
+       - ./cert/_.${DOMAIN}/key.pem:/etc/x509/https/tls.key
+       - ./config/keycloak-realm-config:/realm-config
+
+    labels:
+      - traefik.enable=true
+      - traefik.backend=keycloak
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_judo
+      - traefik.http.services.keycloak.loadBalancer.server.port=80
+
+      # SSL configuration
+      - traefik.http.routers.keycloak.entryPoints=https
+      - traefik.http.routers.keycloak.rule=host(`keycloak.${DOMAIN}`)
+      - traefik.http.routers.keycloak.tls=true
+
+    healthcheck:
+       test: ["CMD-SHELL", "curl -U --fail http://localhost:80/auth/realms/master"]
+       interval: 10s
+       timeout: 1s
+       retries: 30
+       
+    depends_on:
+      postgres:
+        condition: service_healthy
+        
+```
+
+<1> Embedd some environment from outside
+
+<2> Its required for the frontend of keycloak to know where it stands behind the proxy.
+
+<3> It tells that the previous URL be used.
+
+<4> Listen in all interfaces inside docker
+
+<5> HTTP port listens - proxy accessing over HTTP port the keycloak
+
+<6> HTTPS port open for auth proxy to access. The certificate setting slo mandatory here.
+
+<7> Offset of port. Interesing. When it set VERY port incremented with this number. So if it is 1000, the HTTP port become 1443. In docker it cleaner to keep zero, because keycloak ports will not collide anothger servie's ports. Its for old times sake, when multiple instance was executred in same machine.
+
+<8> Improt the JSON files as initial data.
+
+<9> To be able to restart the service. Or you can make immutable if does not any persist, only just import.
+
+<10> The certs again. Oh yeah. Same certs will not coillide another so. Certificartions our passport to the
+consitency haeven.
+
+#### Keycloak.env
+
+```
+TZ=Europe/Budapest
+DB_VENDOR=POSTGRES
+DB_ADDR=postgres
+DB_DATABASE=judo
+DB_USER=judo
+DB_SCHEMA=public
+DB_PASSWORD=judo
+KEYCLOAK_USER=admin
+KEYCLOAK_PASSWORD=judo
+PROXY_ADDRESS_FORWARDING=true
+
+```
+
+Some default. Read it as text. I think no need eny explationion. I'm tired. I think. My energies kept for others.
+
+
+#### master-users-0.json:
+
+The admin@example.com user. Why this json so ugly? Firts of all, it is exported from a running keycloak, and 
+put here to be imported at start. Second reason, one of example it was confiured. I licensed from there. What a nice word - as a matter of fact I stoled. Luckely here my hands are not cutted out for that sin (yet).
+
+#### master-realm.json:
+
+Thats the configuration where the `oauth-proxy` is living. Another easter egg found. On there the redirect uri can match
+with the auth-proxy url to be able to call back when authentication happened.  So good for you :)
+
+
+## Oh errors
+
+So As you see I'm not perfect and maybe some of my stuffz not as good I think. In that case please teach me. Feel free to put some pull
+requests and correct me. I wanna learn! I'm too old, I have not got that sharp brain, so only with the extension of knowledge can be 
+https://www.youtube.com/watch?v=Y4QbJRAWvRU&ab_channel=YelloVEVO[race] with you.
+
+## Credits
+
+
+So there is some credit list. Don't you think I created this whole crap? Don't believe I will not share the responsibility and
+I will carry the can alone?
+
+https://community.traefik.io/t/forwardauth-openid-keycloak/1788
+
+https://www.linkedin.com/pulse/homelab-single-sign-on-tls-aymen-furter/?articleId=6662081833322315776
+
+https://carey.li/2019/10/01/traefik-2-sso-ssl/
+
+https://github.com/thomseddon/traefik-forward-auth/issues/134
+
+https://blog.ruanbekker.com/blog/2020/12/23/https-for-local-development-with-minica/
+
+https://www.medicalnewstoday.com/articles/types-of-gender-identity#types-of-gender-identity
+
+https://en.wikipedia.org/wiki/X.509
+
+https://en.wikipedia.org/wiki/Single_sign-on
+
+https://letsencrypt.org/
+
+https://en.wikipedia.org/wiki/Sed
+
+https://en.wikipedia.org/wiki/OpenID
+
+https://portswigger.net/web-security/csrf/tokens
+
+
+
 

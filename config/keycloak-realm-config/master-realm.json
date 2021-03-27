@@ -81,7 +81,7 @@
       "attributes" : { }
     } ],
     "client" : {
-      "oauth2-proxy" : [ ],
+      "oauth-proxy" : [ ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
@@ -502,7 +502,7 @@
   },
     {
       "id": "0493c7c6-6e20-49ea-9acb-627c0b52d400",
-      "clientId": "oauth2-proxy",
+      "clientId": "oauth-proxy",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,

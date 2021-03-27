@@ -29,7 +29,6 @@ services:
 
     environment:
       - TZ=Europe/Budapest
-      - DO_AUTH_TOKEN=${DO_AUTH_TOKEN}
 
     networks:
       judo:
@@ -112,7 +111,7 @@ services:
       # SSL configuration
       - traefik.http.routers.whoami.entryPoints=https
       - traefik.http.routers.whoami.rule=host(`whoami.${DOMAIN}`)
-#      - traefik.http.routers.whoami.middlewares=sso@file
+      - traefik.http.routers.whoami.middlewares=sso@file
       - traefik.http.routers.whoami.tls=true
 
 # #############################################################################
@@ -121,7 +120,7 @@ services:
 
   postgres:
     container_name: ${COMPOSE_PROJECT_NAME}_postgres
-    build: ./postgres-hypopg
+    build: ./build/postgres-hypopg
     restart: unless-stopped
     env_file:
       - ./config/postgres.env
@@ -164,8 +163,6 @@ services:
         aliases:
           - keycloak.${DOMAIN}
 
-    domainname: "keycloak.${DOMAIN}"
-    hostname: "keycloak"
     dns_search: ${DOMAIN}
 
     command:

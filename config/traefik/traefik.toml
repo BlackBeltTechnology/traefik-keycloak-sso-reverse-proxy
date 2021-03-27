@@ -1,5 +1,6 @@
 [log]
   level = "DEBUG"
+  filePath = "/logs/traefik.log"
 
 [entryPoints]
   [entryPoints.http]
@@ -20,3 +21,6 @@
     exposedbydefault = false
     defaultrule = "Host(`{{ .Name }}.localtest.me`)"
 
+[accessLog]
+  filePath = "/logs/access.log"
+  
