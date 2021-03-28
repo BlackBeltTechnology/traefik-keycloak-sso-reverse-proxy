@@ -120,7 +120,7 @@ services:
 
   postgres:
     container_name: ${COMPOSE_PROJECT_NAME}_postgres
-    build: ./build/postgres-hypopg
+    image: postgres:latest
     restart: unless-stopped
     env_file:
       - ./config/postgres.env
