@@ -83,7 +83,15 @@ Nice domain, localtest.me. Its proactive, you wanna tests it, it asks for it :) 
 
 --
 +
-. Import the CA into OS keychain. Usally double click in the `minica.pem` is enough. But its OS and Browser dependent. When this CA is imported all other 
+. Import the CA into OS keychain. Usally double click in the `minica.pem` is enough.
+You can also play commands listed below for Debian/Ubuntu based OS:
+```
+sudo mkdir /usr/share/ca-certificates/extra/
+sudo cp ./cert/minica.pem /usr/share/ca-certificates/extra/
+sudo dpkg-reconfigure ca-certificates
+```
+
+But its OS and Browser dependent. When this CA is imported all other 
 generated certificate in browser will be valid. Or always fight with your browser that you woluld like to proceed to site.
 
 . Start compose
@@ -200,7 +208,7 @@ So its cool. When you have public IP and open port or run in the cloud. If I wil
 
 IMPORTANT: Do not use self-signed certificate for production systems. And it's serious.
 
-### docer-compose.yaml
+### docker-compose.yaml
 
 It is your description of container. I'm not sure that you care how it works. You yust wanna add a new service. You can do it. Yeah.
 
