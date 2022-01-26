@@ -98,7 +98,7 @@ generated certificate in browser will be valid. Or always fight with your browse
 +
 --
 ```
-docker compose up
+docker-compose up
 ```
 --
 
