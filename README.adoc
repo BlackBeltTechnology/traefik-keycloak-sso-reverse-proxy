@@ -85,14 +85,79 @@ Nice domain, localtest.me. Its proactive, you wanna tests it, it asks for it :) 
 +
 . Import the CA into OS keychain. Usally double click in the `minica.pem` is enough.
 You can also play commands listed below for Debian/Ubuntu based OS:
+
+**System**
+
+Install the root certifcate on your system
 ```
-sudo mkdir /usr/share/ca-certificates/extra/
-sudo cp ./cert/minica.pem /usr/share/ca-certificates/extra/
-sudo dpkg-reconfigure ca-certificates
+sudo cp ./cert/minica.pem /usr/local/share/ca-certificates/minica.crt
+sudo chmod 644 /usr/local/share/ca-certificates/minica.crt
+sudo update-ca-certificates
 ```
 
 But its OS and Browser dependent. When this CA is imported all other 
 generated certificate in browser will be valid. Or always fight with your browser that you woluld like to proceed to site.
+
+**Browser (Firefox, Chromium,...)**
+
+Linux doesn't have a Trustore unlike Mac.
+
+Instead of adding the certificate manually for each application lazy developers use a script.
+
+First install the `certutil` tool.
+
+```
+sudo apt install libnss3-tools
+```
+
+This scripts finds trust store databases and imports the new root certificate into them.
+```
+#!/bin/sh
+
+### Script installs minica.pem to certificate trust store of applications using NSS
+### (e.g. Firefox, Thunderbird, Chromium)
+### Mozilla uses cert8, Chromium and Chrome use cert9
+
+###
+### Requirement: apt install libnss3-tools
+###
+
+
+###
+### CA file to install (customize!)
+### Retrieve Certname: openssl x509 -noout -subject -in minica.pem
+###
+
+certfile="minica.pem"
+certname="minica root ca"
+
+
+
+###
+### For cert8 (legacy - DBM)
+###
+
+for certDB in $(find ~/ -name "cert8.db")
+do
+    certdir=$(dirname ${certDB});
+    certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d dbm:${certdir}
+done
+
+
+###
+### For cert9 (SQL)
+###
+
+for certDB in $(find ~/ -name "cert9.db")
+do
+    certdir=$(dirname ${certDB});
+    certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d sql:${certdir}
+done
+
+```
+
+Restart your browsers. Your certificates are now trusted.
+Source: https://gist.github.com/mwidmann/115c2a7059dcce300b61f625d887e5dc
 
 . Start compose
 +
@@ -734,5 +799,5 @@ https://en.wikipedia.org/wiki/HTTP_cookie#:~:text=An%20HTTP%20cookie%20(also%20c
 
 https://itnext.io/a-beginners-guide-to-deploying-a-docker-application-to-production-using-docker-compose-de1feccd2893
 
-
+https://gist.github.com/mwidmann/115c2a7059dcce300b61f625d887e5dc
 
