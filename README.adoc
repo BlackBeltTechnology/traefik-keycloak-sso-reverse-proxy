@@ -242,7 +242,7 @@ Oh. Okay. Maybe. Let's do it.
 
 ### .env file
 
-It's goal to store every enviromental parameters. So we are storing there our network and domain name now. But! It's for
+It's goal to store every environmental parameters. So we are storing there our network and domain name now. But! It's for
 `docker-compose.yaml` only. There are other configurations which referencing the domain name. So it's the best if you list it
 and change it. (or using the fency https://en.wikipedia.org/wiki/Sed[sed] based find and replace tool from 1973. Thank you Mr. Lee E. MacMahon)
 
