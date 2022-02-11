@@ -172,7 +172,7 @@ Okay... and what. Patitence. Eventually it will finish the job and starts. When 
 https://whoami.localtest.me
 
 
-The user is admin@example.com and the password is `password`. Yes. Its true. The top star pasword is used as password.
+The user is admin@example.com and the password is `password`. Yes. Its true. The top star password is used as password.
 Totally unsecure. Just to feel uncomfortable enough to change it immediately. So please change it in keycloak. I beg you.
 
 You think you will see some very interesting thing... Huh. no... Iw will no some some kitty or playing bears. It will only dipslay 
