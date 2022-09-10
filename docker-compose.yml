@@ -9,7 +9,7 @@ services:
 # #############################################################################
 #   Trafik (Load Balancer)
 #  Listen onm 80 and 443. 
-#  It redirect xxxx.${DOMAIN} to the host of the given sybdomain.
+#  It redirect xxxx.${DOMAIN} to the host of the given subdomain.
 #  It allows to use http / https schema, but http is redirected to https.
 # #############################################################################
 
